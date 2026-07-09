@@ -129,6 +129,13 @@ html_theme = "nvidia_sphinx_theme"
 # documentation.
 #
 html_theme_options = {
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/NVIDIA/Megatron-Energon/",
+            "icon": "fa-brands fa-github",
+        }
+    ],
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
