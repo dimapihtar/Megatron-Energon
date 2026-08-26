@@ -69,11 +69,6 @@ autodoc_mock_imports = [
 autodoc_typehints = "description"
 autodoc_typehints_format = "short"
 
-# Mock everything here, so that not just autodoc, but also sphinx_click can make use of the mock imports
-from sphinx.ext.autodoc.mock import MockFinder
-
-sys.meta_path.insert(0, MockFinder(autodoc_mock_imports))
-
 # Napoleon
 napoleon_google_docstring = True
 napoleon_numpy_docstring = True
