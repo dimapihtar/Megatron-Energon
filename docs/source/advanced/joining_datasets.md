@@ -7,7 +7,7 @@ Joining is needed when you have two or more corresponding datasets, each dataset
 
 ```{image} ../images/joining.png
 :alt: Joining Datasets
-:class: bg-primary
+:class: bg-transparent
 :width: 550px
 :align: center
 ```
