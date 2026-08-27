@@ -43,7 +43,7 @@ dev = [
   "sphinx",
   "myst-parser",
   "soundfile",
-  "sphinx-rtd-theme",
+  "nvidia-sphinx-theme",
   "sphinx-click",
 ]
 transforms = [
