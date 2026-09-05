@@ -1,6 +1,7 @@
-# Copyright (c) 2026, NVIDIA CORPORATION.
+# Copyright (c) 2025, NVIDIA CORPORATION.
 # SPDX-License-Identifier: BSD-3-Clause
 
+import io
 import torch
 
 from megatron.energon.rng import SystemRngState
@@ -24,3 +25,8 @@ def register_safe_globals():
     """Register megatron-energon safe classes with torch serialization."""
     for cls in SAFE_GLOBALS:
         torch.serialization.add_safe_globals([cls])
+
+
+def safe_load_from_bytes(b):
+    """Safe version (weights_only=True) of `torch.storage._load_from_bytes`."""
+    return torch.load(io.BytesIO(b), weights_only=True)
