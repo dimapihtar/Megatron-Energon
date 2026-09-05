@@ -1,3 +1,6 @@
+# Copyright (c) 2026, NVIDIA CORPORATION.
+# SPDX-License-Identifier: BSD-3-Clause
+
 import torch
 
 from megatron.energon.rng import SystemRngState
