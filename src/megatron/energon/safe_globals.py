@@ -23,6 +23,7 @@ SAFE_GLOBALS = [
     numpy._core.multiarray._reconstruct,
     numpy.ndarray,
     numpy.dtype,
+    numpy.dtypes.UInt32DType,
 ]
 
 
