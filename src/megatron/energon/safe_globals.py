@@ -22,6 +22,7 @@ SAFE_GLOBALS = [
     FlexState,
     numpy._core.multiarray._reconstruct,
     numpy.ndarray,
+    numpy.dtype,
 ]
 
 
