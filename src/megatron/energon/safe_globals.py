@@ -1,7 +1,19 @@
 import torch
 
+from megatron.energon.rng import SystemRngState
+from megatron.energon.savable_loader import (
+    SavableDataLoaderState,
+    SavableDatasetCheckpoint,
+    SavableDatasetState,
+)
+from megatron.energon.state import FlexState
 
 SAFE_GLOBALS = [
+    SavableDataLoaderState,
+    SavableDatasetCheckpoint,
+    SavableDatasetState,
+    SystemRngState,
+    FlexState,
 ]
 
 
