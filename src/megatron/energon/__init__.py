@@ -210,3 +210,7 @@ __all__ = [
     "VQAWebdataset",
     "WorkerConfig",
 ]
+
+from .safe_globals import register_safe_globals
+
+register_safe_globals()
