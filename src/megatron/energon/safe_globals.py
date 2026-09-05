@@ -6,7 +6,7 @@ import io
 import numpy
 import torch
 
-megatron.energon.flavors.webdataset.sample_loader import SliceState
+from megatron.energon.flavors.webdataset.sample_loader import SliceState
 from megatron.energon.rng import SystemRngState
 from megatron.energon.savable_loader import (
     SavableDataLoaderState,
