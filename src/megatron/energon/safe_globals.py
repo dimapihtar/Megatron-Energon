@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import io
+import numpy
 import torch
 
 from megatron.energon.rng import SystemRngState
@@ -18,6 +19,7 @@ SAFE_GLOBALS = [
     SavableDatasetState,
     SystemRngState,
     FlexState,
+    numpy._core.multiarray._reconstruct,
 ]
 
 
