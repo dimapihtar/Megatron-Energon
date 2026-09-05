@@ -6,6 +6,7 @@ import io
 import numpy
 import torch
 
+megatron.energon.flavors.webdataset.sample_loader import SliceState
 from megatron.energon.rng import SystemRngState
 from megatron.energon.savable_loader import (
     SavableDataLoaderState,
@@ -18,6 +19,7 @@ SAFE_GLOBALS = [
     SavableDataLoaderState,
     SavableDatasetCheckpoint,
     SavableDatasetState,
+    SliceState,
     SystemRngState,
     FlexState,
     numpy._core.multiarray._reconstruct,
