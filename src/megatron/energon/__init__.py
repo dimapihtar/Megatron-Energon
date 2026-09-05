@@ -9,6 +9,8 @@ except Exception:
     # Fallback for development mode when package is not installed
     __version__ = "unknown"
 
+import torch
+
 from megatron.energon.cache import (
     CachePool,
     DecodeFileStore,
