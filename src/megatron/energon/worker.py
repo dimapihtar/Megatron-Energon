@@ -315,8 +315,7 @@ class WorkerConfig:
     @property
     def lanes_per_worker(self) -> int:
         """Number of lanes hosted by each worker."""
-        assert self.num_lanes is not None, "num_lanes is not set"
-        return self.num_lanes // (self.world_size * max(1, self.num_workers))
+        return self.num_global_lanes // (self.world_size * max(1, self.num_workers))
 
     def worker_lane_ids(self, local_worker_id: int) -> List[int]:
         """Returns the lane ids hosted by a worker of the current rank, in rotation order."""
@@ -328,7 +327,16 @@ class WorkerConfig:
         """Returns `(rank, local_worker_id, slot)` that host the given lane. `slot` is the position
         of the lane in the worker's rotation. Inverse of `worker_lane_ids`.
         """
-        assert self.num_lanes is not None and 0 <= lane_id < self.num_lanes
+        assert 0 <= lane_id < self.num_global_lanes
         rank, local_lane = divmod(lane_id, self.lanes_per_rank)
         slot, local_worker_id = divmod(local_lane, max(1, self.num_workers))
         return rank, local_worker_id, slot
+
+    @property
+    def num_global_lanes(self) -> int:
+        """Number of independent data streams (lanes) across all ranks. Without `num_lanes`, 
+        every global worker is its own lane.
+        """
+        if self.num_lanes is not None:
+            return self.num_lanes
+        return self.world_size * max(1, self.num_workers)

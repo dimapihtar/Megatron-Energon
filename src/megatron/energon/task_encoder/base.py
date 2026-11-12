@@ -1100,7 +1100,7 @@ class TaskEncoder(ABC, Generic[T_sample, T_encoded_sample, T_raw_batch, T_batch]
     def _compute_rotation_offsets(
         self, datasets: List[LoadedDataset], worker_config: WorkerConfig
     ) -> List[int]:
-        global_workers = max(1, worker_config.num_workers) * worker_config.world_size
+        global_workers = worker_config.num_global_lanes
         rotation_lengths = [len(d.dataset) for d in datasets]
         for i in range(1, len(rotation_lengths)):
             rotation_lengths[i] += rotation_lengths[i - 1]

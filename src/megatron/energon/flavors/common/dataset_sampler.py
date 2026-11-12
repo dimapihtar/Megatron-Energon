@@ -150,6 +150,9 @@ class DatasetSampler(SavableDataset[RawSampleData]):
 
     def ensure_slice_offsets(self) -> None:
         self.worker_config.assert_worker()
+        assert self.worker_config.lanes_per_worker == 1, (
+            "Hosting multiple lanes per worker is not supported yet"
+        )
 
         if self.slice_offsets is None:
             self.slice_offsets = self.workers_slice_offsets[self.worker_config.rank_worker_id()]

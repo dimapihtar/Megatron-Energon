@@ -204,7 +204,7 @@ class Sharder:
 
         num_workers = max(1, worker_config.num_workers)
 
-        global_workers = num_workers * worker_config.world_size
+        global_workers = worker_config.num_global_lanes
 
         min_samples_per_worker = int(total_samples / global_workers)
         num_workers_with_more_samples = total_samples % global_workers
@@ -256,11 +256,12 @@ class Sharder:
             global_worker_sample_split_offsets.append(cur_offset)
 
         # 4. Now we extract the local rank's worker ranges
+        lanes_per_rank = worker_config.lanes_per_rank
         local_worker_sample_split_offsets = global_worker_sample_split_offsets[
-            worker_config.rank * num_workers : (worker_config.rank + 1) * num_workers + 1
+            worker_config.rank * lanes_per_rank : (worker_config.rank + 1) * lanes_per_rank + 1
         ]
 
-        assert len(local_worker_sample_split_offsets) == num_workers + 1, (
+        assert len(local_worker_sample_split_offsets) == lanes_per_rank + 1, (
             "If this fails, there's a bug in the code above."
         )
 
