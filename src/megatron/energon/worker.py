@@ -275,6 +275,7 @@ class WorkerConfig:
             "data_parallel_group": (
                 self.data_parallel_group.size() if self.data_parallel_group else None
             ),
+            **({} if self.num_lanes is None else {"num_lanes": self.num_lanes}),
         }
 
     def should_log(self, level: int) -> bool:
