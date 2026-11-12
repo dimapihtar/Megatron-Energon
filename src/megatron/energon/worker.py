@@ -36,6 +36,8 @@ class WorkerConfig:
     world_size: int
     #: The number of workers per rank. May be 0 to disable worker processes.
     num_workers: int
+    #: Number of logical lanes. A lane owns a fixed slice of the data.
+    num_lanes: Optional[int] = None
 
     #: If not using all ranks for data parallel, set this to the corresponding group.
     data_parallel_group: Optional[torch.distributed.ProcessGroup] = None
@@ -82,6 +84,22 @@ class WorkerConfig:
 
     #: The current cache pool for the worker.
     _cache_pool: "ClassVar[Optional[CachePool]]" = None
+
+    def __post_init__(self):
+        if self.num_lanes is None:
+            return
+        global_workers = self.world_size * max(1, self.num_workers)
+        if self.num_lanes < 1 and self.num_lanes % global_workers != 0:
+            valid_num_lanes = [
+                nw
+                for nw in range(1, self.num_lanes + 1)
+                if self.num_lanes % (self.world_size * nw) == 0
+            ]
+            raise ValueError(
+                f"num_lanes={self.num_lanes} must be a multiple of world_size * num_workers = "
+                f"{self.world_size} * {max(1, self.num_workers)} = {global_workers}. "
+                f"Valid num_workers for world_size={self.world_size}: {valid_num_lanes}"
+            )
 
     def worker_activate(
         self,
@@ -286,3 +304,30 @@ class WorkerConfig:
                 self._worker_debug_file_worker_id = worker_id
             self._worker_debug_file.write(json.dumps(data) + "\n")
             self._worker_debug_file.flush()
+
+    @property
+    def lanes_per_rank(self) -> int:
+        """Number of lanes hosted by each rank."""
+        assert self.num_lanes is not None, "num_lanes is not set"
+        return self.num_lanes // self.world_size
+
+    @property
+    def lanes_per_worker(self) -> int:
+        """Number of lanes hosted by each worker."""
+        assert self.num_lanes is not None, "num_lanes is not set"
+        return self.num_lanes // (self.world_size * max(1, self.num_workers))
+
+    def worker_lane_ids(self, local_worker_id: int) -> List[int]:
+        """Returns the lane ids hosted by a worker of the current rank, in rotation order."""
+        first_lane = self.rank * self.lanes_per_rank
+        nw = max(1, self.num_workers)
+        return [first_lane + local_worker_id + nw * j for j in range(self.lanes_per_worker)]
+
+    def lane_owner(self, lane_id: int) -> Tuple[int, int, int]:
+        """Returns `(rank, local_worker_id, slot)` that host the given lane. `slot` is the position
+        of the lane in the worker's rotation. Inverse of `worker_lane_ids`.
+        """
+        assert self.num_lanes is not None and 0 <= lane_id < self.num_lanes
+        rank, local_lane = divmod(lane_id, self.lanes_per_rank)
+        slot, local_worker_id = divmod(local_lane, max(1, self.num_workers))
+        return rank, local_worker_id, slot
