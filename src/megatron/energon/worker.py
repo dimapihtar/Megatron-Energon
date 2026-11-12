@@ -6,7 +6,7 @@ import json
 import multiprocessing
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, ClassVar, Dict, List, Optional, TextIO, TypeVar
+from typing import Any, Callable, ClassVar, Dict, List, Optional, TextIO, Tuple, TypeVar
 
 import torch.distributed
 import torch.utils.data
@@ -89,7 +89,7 @@ class WorkerConfig:
         if self.num_lanes is None:
             return
         global_workers = self.world_size * max(1, self.num_workers)
-        if self.num_lanes < 1 and self.num_lanes % global_workers != 0:
+        if self.num_lanes < 1 or self.num_lanes % global_workers != 0:
             valid_num_lanes = [
                 nw
                 for nw in range(1, self.num_lanes + 1)
